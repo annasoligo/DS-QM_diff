@@ -1,0 +1,35 @@
+data:
+  sequence_iterator:
+    classname: HuggingfaceTextDatasetTokenSequenceLoader
+    kwargs:
+      hf_dataset_name: "annasoli/r1qw_numinamath"
+      sequence_length: 512
+      shuffle_buffer_size: 1024
+  activations_harvester:
+    llms:
+      # - name: EleutherAI/pythia-160M
+      #   revision: step142000
+      - name: deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B
+      - name: Qwen/Qwen2.5-Math-1.5B
+      #revision: step143000
+    harvesting_batch_size: 4
+  activations_shuffle_buffer_size: 1024
+crosscoder:
+  hidden_dim: 6144
+  jumprelu:
+    backprop_through_jumprelu_input: true
+  initial_approx_firing_pct: 0.3 # WARNING(oli): very uncertain this is a good default!
+train:
+  num_steps: 50_000
+  batch_size: 128
+  save_every_n_steps: 2500
+  log_every_n_steps: 50
+  c: 4.0
+  final_lambda_s: 2
+  lambda_p: 0.000003
+  optimizer:
+    initial_learning_rate: 1e-04
+    last_pct_of_steps: 0.2
+    warmup_pct: 0.05
+experiment_name: oli-interp-test
+hookpoints: ["blocks.3.hook_resid_post"]
